@@ -1,0 +1,6 @@
+{
+    "RateResponse": {
+      "Response": "this should be an object",
+      "RatedShipment": "not an array"
+    }
+  }

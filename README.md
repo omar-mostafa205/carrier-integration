@@ -1,8 +1,13 @@
 # Carrier Integration Service
 
+<p align="center">
+  <img src="diagrams/arch.png" width="800" />
+</p>
+
 A TypeScript service that wraps the UPS Rating API to fetch shipping rates. Built to easily add more carriers like FedEx, USPS, and DHL.
 
 ## Setup
+
 ```bash
 npm install
 cp .env.example .env
@@ -11,6 +16,7 @@ npm run build
 ```
 
 Add your UPS credentials to `.env`:
+
 ```
 UPS_CLIENT_ID=your_client_id
 UPS_CLIENT_SECRET=your_secret
@@ -18,33 +24,34 @@ UPS_ACCOUNT_NUMBER=your_account
 ```
 
 ## How to Use
+
 ```typescript
-import { createCarrierService } from './src';
+import { createCarrierService } from "./src";
 
 const service = createCarrierService();
 
-const rates = await service.getRates('UPS', {
+const rates = await service.getRates("UPS", {
   origin: {
-    street: '123 Main St',
-    city: 'San Francisco',
-    state: 'CA',
-    zipCode: '94102',
-    country: 'US',
+    street: "123 Main St",
+    city: "San Francisco",
+    state: "CA",
+    zipCode: "94102",
+    country: "US",
   },
   destination: {
-    street: '456 Oak Ave',
-    city: 'New York',
-    state: 'NY',
-    zipCode: '10001',
-    country: 'US',
+    street: "456 Oak Ave",
+    city: "New York",
+    state: "NY",
+    zipCode: "10001",
+    country: "US",
   },
   package: {
     weight: 10,
-    weightUnit: 'LBS',
+    weightUnit: "LBS",
     length: 12,
     width: 8,
     height: 6,
-    dimensionUnit: 'IN',
+    dimensionUnit: "IN",
   },
 });
 ```
@@ -58,6 +65,7 @@ The service has three layers:
 3. **Infrastructure** - HTTP calls, OAuth, caching
 
 When you request rates:
+
 1. Input gets validated
 2. Request transforms to UPS format
 3. OAuth token fetched (or reused from cache)
@@ -66,23 +74,24 @@ When you request rates:
 6. Normalized rates returned
 
 ## Project Structure
+
 ```
 src/
   types/
     domain.ts          - Address, Package, Rate (our format)
     carrier.ts         - Interface all carriers must follow
     ups-api.ts         - UPS API types (their format)
-  
+
   carriers/ups/
     UPSAdapter.ts      - Coordinates the workflow
     UPSAuthProvider.ts - Handles OAuth tokens
     mappers.ts         - Converts our format to/from UPS format
     client.ts          - Makes HTTP calls with auth
-  
+
   utils/
     http-client.ts     - Wraps axios with error handling
     token-cache.ts     - Stores tokens in memory
-  
+
   errors/index.ts      - Error types (AuthenticationError, etc)
   schemas/index.ts     - Validation rules using Zod
   config.ts            - Reads environment variables
@@ -122,11 +131,12 @@ Example for FedEx:
 3. Add FedEx API types to `src/types/fedex-api.ts`
 4. Write mappers for FedEx format
 5. Register in `src/index.ts`:
+
 ```typescript
 const fedexAdapter = new FedExAdapter(/* setup */);
 return new CarrierService([
-  { name: 'UPS', adapter: upsAdapter },
-  { name: 'FEDEX', adapter: fedexAdapter },
+  { name: "UPS", adapter: upsAdapter },
+  { name: "FEDEX", adapter: fedexAdapter },
 ]);
 ```
 
@@ -135,6 +145,7 @@ No changes needed to existing UPS code.
 ## Testing
 
 All tests use stubbed HTTP responses. No real API calls.
+
 ```bash
 npm test                # Run once
 npm run test:watch      # Run on file changes
@@ -142,6 +153,7 @@ npm run test:coverage   # See coverage report
 ```
 
 Tests verify:
+
 - Request payloads match UPS format
 - Responses parse correctly
 - OAuth tokens cache and refresh
@@ -160,11 +172,13 @@ All errors include details for debugging.
 ## What I Would Add Next
 
 **Short term:**
+
 - Add FedEx support
 - Cache rate responses for 5 minutes
 - Add request logging
 
 **Long term:**
+
 - Label purchase endpoint
 - Shipment tracking
 - Address validation
@@ -213,6 +227,7 @@ Loads and validates environment variables.
 CarrierService class and factory function.
 
 ## Running Commands
+
 ```bash
 npm run dev          # Run with tsx
 npm run build        # Compile TypeScript
